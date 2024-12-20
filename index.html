@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- <div>
+        // Program 7:- Write a program for error detecting code using CRC-CCITT (16- bits)
+
+import java.util.Scanner;
+
+public class CRC1 {
+
+    public static void main(String args[]) {
+
+        Scanner sc = new Scanner(System.in);
+
+        //Input Data Stream
+        System.out.print("Enter message bits: ");
+        String message = sc.nextLine();
+        System.out.print("Enter generator: ");
+        String generator = sc.nextLine();
+        int data[] = new int[message.length() + generator.length() - 1];
+        int divisor[] = new int[generator.length()];
+        for (int i = 0; i < message.length(); i++) {
+            data[i] = Integer.parseInt(message.charAt(i) + "");
+        }
+        for (int i = 0; i < generator.length(); i++) {
+            divisor[i] = Integer.parseInt(generator.charAt(i) + "");
+        }
+
+//Calculation of CRC
+        for (int i = 0; i < message.length(); i++) {
+            if (data[i] == 1) {
+                for (int j = 0; j < divisor.length; j++) {
+                    data[i + j] ^= divisor[j];
+                }
+            }
+        }
+
+//Display CRC
+        System.out.print("The checksum code is: ");
+        for (int i = 0; i < message.length(); i++) {
+            data[i] = Integer.parseInt(message.charAt(i) + "");
+        }
+        for (int i = 0; i < data.length; i++) {
+            System.out.print(data[i]);
+        }
+        System.out.println();
+
+//Check for input CRC code
+        System.out.print("Enter checksum code: ");
+        message = sc.nextLine();
+        System.out.print("Enter generator: ");
+        generator = sc.nextLine();
+        data = new int[message.length() + generator.length() - 1];
+        divisor = new int[generator.length()];
+        for (int i = 0; i < message.length(); i++) {
+            data[i] = Integer.parseInt(message.charAt(i) + "");
+        }
+        for (int i = 0; i < generator.length(); i++) {
+            divisor[i] = Integer.parseInt(generator.charAt(i) + "");
+        }
+
+//Calculation of remainder
+        for (int i = 0; i < message.length(); i++) {
+            if (data[i] == 1) {
+                for (int j = 0; j < divisor.length; j++) {
+                    data[i + j] ^= divisor[j];
+                }
+            }
+        }
+
+//Display validity of data
+        boolean valid = true;
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] == 1) {
+                valid = false;
+                break;
+            }
+        }
+
+        if (valid == true) {
+            System.out.println("Data stream is valid");
+        } else {
+            System.out.println("Data stream is invalid. CRC error occurred.");
+        }
+    }
+
+}
+
+
+// Program 12:- Write a program for congestion control using a leaky bucket algorithm
+
+import java.lang.*;
+import java.util.Scanner;
+
+public class lab12 {
+
+    public static void main(String[] args) {
+        int i;
+        int a[] = new int[20];
+        int buck_rem = 0, buck_cap = 4, rate = 3, sent, recv;
+        Scanner in = new Scanner(System.in);
+        System.out.println("Enter the number of packets");
+        int n = in.nextInt();
+        System.out.println("Enter the packets");
+        for (i = 1; i <= n; i++) {
+            a[i] = in.nextInt();
+        }
+        System.out.println("Clock \t packet size \t accept \t sent \t remaining");
+        for (i = 1; i <= n; i++) {
+            if (a[i] != 0) {
+                if (buck_rem + a[i] > buck_cap) {
+                    recv = -1;
+                } else {
+                    recv = a[i];
+                    buck_rem += a[i];
+                }
+            } else {
+                recv = 0;
+            }
+            if (buck_rem != 0) {
+                if (buck_rem < rate) {
+                    sent = buck_rem;
+                    buck_rem = 0;
+                } else {
+                    sent = rate;
+                    buck_rem = buck_rem - rate;
+                }
+            } else {
+                sent = 0;
+            }
+            if (recv == -1) {
+                System.out.println(+i + "\t\t" + a[i] + "\t dropped \t" + sent + "\t" + buck_rem);
+            } else {
+                System.out.println(+i + "\t\t" + a[i] + "\t\t" + recv + "\t" + sent + "\t" + buck_rem);
+            }
+        }
+    }
+}
+
+// Program 8:- Write a program to find the shortest path between vertices using the bellman-ford algorithm
+
+import java.util.Scanner;
+
+public class ford {
+
+    private int D[];
+    private int num_ver;
+    public static final int MAX_VALUE = 999;
+
+    public ford(int num_ver) {
+        this.num_ver = num_ver;
+        D = new int[num_ver + 1];
+    }
+
+    public void BellmanFordEvaluation(int source, int A[][]) {
+        for (int node = 1; node <= num_ver; node++) {
+            D[node] = MAX_VALUE;
+        }
+
+        D[source] = 0;
+
+        for (int node = 1; node <= num_ver - 1; node++) {
+            for (int sn = 1; sn <= num_ver; sn++) {
+                for (int dn = 1; dn <= num_ver; dn++) {
+                    if (A[sn][dn] != MAX_VALUE) {
+                        if (D[dn] > D[sn] + A[sn][dn]) {
+                            D[dn] = D[sn] + A[sn][dn];
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int sn = 1; sn <= num_ver; sn++) {
+            for (int dn = 1; dn <= num_ver; dn++) {
+                if (A[sn][dn] != MAX_VALUE) {
+                    if (D[dn] > D[sn] + A[sn][dn]) {
+                        System.out.println("The Graph contains negative egde cycle");
+
+                    }
+                }
+            }
+        }
+
+        for (int vertex = 1; vertex <= num_ver; vertex++) {
+            System.out.println("distance of source" + source + "to" + vertex + "is" + D[vertex]);
+        }
+    }
+
+    public static void main(String[] args) {
+        int num_ver = 0;
+        int source;
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter the number of vertices");
+        num_ver = scanner.nextInt();
+
+        int A[][] = new int[num_ver + 1][num_ver + 1];
+        System.out.println("Enter the adjacency matrix");
+        for (int sn = 1; sn <= num_ver; sn++) {
+            for (int dn = 1; dn <= num_ver; dn++) {
+                A[sn][dn] = scanner.nextInt();
+                if (sn == dn) {
+                    A[sn][dn] = 0;
+                    continue;
+                }
+                if (A[sn][dn] == 0) {
+                    A[sn][dn] = MAX_VALUE;
+                }
+            }
+        }
+
+        System.out.println("Enter the source vertex");
+        source = scanner.nextInt();
+        ford b = new ford(num_ver);
+        b.BellmanFordEvaluation(source, A);
+        scanner.close();
+    }
+}
+// Program 11:- Write a program for a simple RSA algorithm to encrypt and decrypt the data
+
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.Random;
+
+public class RSA {
+
+    private BigInteger p, q, N, phi, e, d;
+    private int bitlength = 1024;
+    private Random r;
+
+    public RSA() {
+        r = new Random();
+        p = BigInteger.probablePrime(bitlength, r);
+        q = BigInteger.probablePrime(bitlength, r);
+        System.out.println("Prime number p is" + p);
+        System.out.println("prime number q is" + q);
+        N = p.multiply(q);
+        phi = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
+        e = BigInteger.probablePrime(bitlength / 2, r);
+        while (phi.gcd(e).compareTo(BigInteger.ONE) > 0 && e.compareTo(phi) < 0) {
+            e.add(BigInteger.ONE);
+        }
+        System.out.println("Public key is" + e);
+        d = e.modInverse(phi);
+        System.out.println("Private key is" + d);
+    }
+
+    public RSA(BigInteger e, BigInteger d, BigInteger N) {
+        this.e = e;
+        this.d = d;
+        this.N = N;
+    }
+
+    public static void main(String[] args) throws IOException {
+        RSA rsa = new RSA();
+        DataInputStream in = new DataInputStream(System.in);
+        String testString;
+        System.out.println("Enter the plain text:");
+        testString = in.readLine();
+        System.out.println("Encrypting string:" + testString);
+        System.out.println("string in bytes:" + bytesToString(testString.getBytes()));
+        byte[] encrypted = rsa.encrypt(testString.getBytes());
+        byte[] decrypted = rsa.decrypt(encrypted);
+        System.out.println("Dcrypting Bytes:" + bytesToString(decrypted));
+        System.out.println("Dcrypted string:" + new String(decrypted));
+    }
+
+    private static String bytesToString(byte[] encrypted) {
+        String test = " ";
+        for (byte b : encrypted) {
+            test += Byte.toString(b);
+        }
+        return test;
+    }
+
+    public byte[] encrypt(byte[] message) {
+        return (new BigInteger(message)).modPow(e, N).toByteArray();
+    }
+
+    public byte[] decrypt(byte[] message) {
+        return (new BigInteger(message)).modPow(d, N).toByteArray();
+    }
+}
+
+import java.io.*;
+import java.net.*;
+
+public class TCPC {
+
+    public static void main(String[] args) throws Exception {
+        Socket sock = new Socket("127.0.01", 4000);
+
+        System.out.println("Enter the filename");
+
+        BufferedReader keyRead = new BufferedReader(new InputStreamReader(System.in));
+
+        String fname = keyRead.readLine();
+
+        OutputStream ostream = sock.getOutputStream();
+
+        PrintWriter pwrite = new PrintWriter(ostream, true);
+
+        pwrite.println(fname);
+
+        InputStream istream = sock.getInputStream();
+
+        BufferedReader socketRead = new BufferedReader(new InputStreamReader(istream));
+
+        String str;
+        while ((str = socketRead.readLine()) != null) {
+            System.out.println(str);
+        }
+
+        pwrite.close();
+        socketRead.close();
+        keyRead.close();
+    }
+}
+// Program 9:- Using TCP/IP sockets, write a client–server program to make the client send the file
+// name and to make the server send back the contents of the requested file if present
+
+import java.io.*;
+import java.net.*;
+
+public class TCPS {
+
+    public static void main(String[] args) throws Exception {
+        ServerSocket sersock = new ServerSocket(4000);
+        System.out.println("Server ready for connection");
+
+        Socket sock = sersock.accept();
+
+        System.out.println("Connection Is successful and waiting for chatting");
+
+        InputStream istream = sock.getInputStream();
+
+        BufferedReader fileRead = new BufferedReader(new InputStreamReader(istream));
+
+        String fname = fileRead.readLine();
+
+        BufferedReader ContentRead = new BufferedReader(new FileReader(fname));
+
+        OutputStream ostream = sock.getOutputStream();
+
+        PrintWriter pwrite = new PrintWriter(ostream, true);
+
+        String str;
+
+        while ((str = ContentRead.readLine()) != null) {
+
+            pwrite.println(str);
+
+        }
+        sock.close();
+        sersock.close();
+        pwrite.close();
+        fileRead.close();
+        ContentRead.close();
+    }
+}
+
+
+
+// Program 10:- Write a program on a datagram socket for the client/server to display the messages on the client side typed at the server-side
+
+import java.net.*;
+import java.net.InetAddress;
+
+class UDPServer {
+
+    public static void main(String args[]) throws Exception {
+        DatagramSocket serverSocket = new DatagramSocket(9876);
+        byte[] receiveData = new byte[1024];
+        byte[] sendData = new byte[1024];
+        while (true) {
+            System.out.println("Server is Up");
+
+            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+
+            serverSocket.receive(receivePacket);
+
+            String sentence = new String(receivePacket.getData());
+
+            System.out.println("RECEIVED:" + sentence);
+
+            InetAddress IPAddress = receivePacket.getAddress();
+
+            int port = receivePacket.getPort();
+
+            String capitalizedSentence = sentence.toUpperCase();
+
+            sendData = capitalizedSentence.getBytes();
+
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
+
+            serverSocket.send(sendPacket);
+        }
+    }
+}
+
+import java.io.*;
+import java.net.*;
+
+class UDPClient {
+
+    public static void main(String[] args) throws Exception {
+        BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
+
+        DatagramSocket clientSocket = new DatagramSocket();
+
+        InetAddress IPAddress = InetAddress.getByName("localhost");
+
+        byte[] sendData = new byte[1024];
+        byte[] receiveData = new byte[1024];
+
+        System.out.println("Enter the sting to be converted in to Upper case");
+        String sentence = inFromUser.readLine();
+
+        sendData = sentence.getBytes();
+
+        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 9876);
+
+        clientSocket.send(sendPacket);
+
+        DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+
+        clientSocket.receive(receivePacket);
+
+        String modifiedSentence = new String(receivePacket.getData());
+
+        System.out.println("FROM SERVER:" + modifiedSentence);
+
+        clientSocket.close();
+    }
+}
+
+    </div> -->
+</body>
+</html>
